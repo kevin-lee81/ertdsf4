@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>디자인 파일 업로드</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 600;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 40px 20px;
+            margin: 30px 0;
+            background: #f8f9ff;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: #764ba2;
+            background: #f0f2ff;
+            transform: translateY(-2px);
+        }
+        
+        .upload-area.dragover {
+            border-color: #764ba2;
+            background: #e8f0ff;
+            transform: scale(1.02);
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+        
+        .upload-text {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .upload-subtext {
+            font-size: 0.9em;
+            color: #999;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            min-width: 120px;
+        }
+        
+        .btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn.secondary {
+            background: #6c757d;
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
+        }
+        
+        .btn.secondary:hover:not(:disabled) {
+            background: #5a6268;
+            box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+        }
+        
+        .file-list {
+            margin: 20px 0;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+            transition: all 0.2s ease;
+        }
+        
+        .file-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .file-info {
+            flex: 1;
+            margin-right: 15px;
+        }
+        
+        .file-name {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        
+        .file-size {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.2s ease;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        .status {
+            margin-top: 30px;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            border-radius: 10px;
+            background: #f8f9fa;
+            padding: 15px;
+        }
+        
+        .status-item {
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            background: white;
+        }
+        
+        .status-item.success {
+            border-left-color: #28a745;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-item.error {
+            border-left-color: #dc3545;
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .status-item.info {
+            border-left-color: #17a2b8;
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 8px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .drive-link {
+            margin-top: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #e8f0ff 0%, #f0f8ff 100%);
+            border-radius: 15px;
+            border: 2px solid #667eea;
+        }
+        
+        .drive-link h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .drive-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.2s ease;
+        }
+        
+        .drive-link a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1em;
+                margin: 5px;
+            }
+            
+            .file-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .file-info {
+                margin-right: 0;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📁 디자인 파일 업로드</h1>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">☁️</div>
+            <div class="upload-text">파일을 여기에 드래그하거나 클릭하세요</div>
+            <div class="upload-subtext">이미지, PDF, AI, PSD, Sketch, Figma 등 디자인 파일 지원</div>
+            <input type="file" id="fileInput" multiple accept="image/*,.pdf,.ai,.psd,.sketch,.fig,.xd">
+        </div>
+        
+        <div class="stats" id="stats" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-number" id="totalFiles">0</div>
+                <div class="stat-label">선택된 파일</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="totalSize">0 MB</div>
+                <div class="stat-label">총 용량</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="uploadProgress">0%</div>
+                <div class="stat-label">진행률</div>
+            </div>
+        </div>
+        
+        <div class="file-list" id="fileList" style="display: none;"></div>
+        
+        <div>
+            <button class="btn" id="selectBtn">📂 파일 선택</button>
+            <button class="btn" id="uploadBtn" disabled>🚀 업로드 시작</button>
+            <button class="btn secondary" id="clearBtn">🗑️ 모두 제거</button>
+        </div>
+        
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="status" id="statusContainer" style="display: none;">
+            <h3 style="margin-bottom: 15px; color: #333;">📋 업로드 상태</h3>
+            <div id="status"></div>
+        </div>
+        
+        <div class="drive-link">
+            <h3>📂 업로드된 파일 확인</h3>
+            <p>
+                <a href="https://drive.google.com/drive/folders/1MTY9JEkfndsQRi-EuAW3O_lnWKdy-FSP?hl=ko" target="_blank">
+                    🔗 Google Drive 폴더 열기
+                </a>
+            </p>
+            <small style="color: #666; margin-top: 10px; display: block;">
+                업로드된 모든 파일이 여기에 저장됩니다
+            </small>
+        </div>
+    </div>
+
+    <script>
+        let selectedFiles = [];
+        let isUploading = false;
+        let uploadStats = { success: 0, error: 0, total: 0 };
+
+        // DOM 요소들
+        const fileInput = document.getElementById('fileInput');
+        const uploadArea = document.getElementById('uploadArea');
+        const fileList = document.getElementById('fileList');
+        const selectBtn = document.getElementById('selectBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const status = document.getElementById('status');
+        const statusContainer = document.getElementById('statusContainer');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const stats = document.getElementById('stats');
+        const totalFiles = document.getElementById('totalFiles');
+        const totalSize = document.getElementById('totalSize');
+        const uploadProgress = document.getElementById('uploadProgress');
+
+        // 파일 크기 포맷팅
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // 총 파일 크기 계산
+        function calculateTotalSize() {
+            return selectedFiles.reduce((total, file) => total + file.size, 0);
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            if (selectedFiles.length === 0) {
+                stats.style.display = 'none';
+                return;
+            }
+
+            stats.style.display = 'flex';
+            totalFiles.textContent = selectedFiles.length;
+            totalSize.textContent = formatFileSize(calculateTotalSize());
+        }
+
+        // 파일 목록 업데이트
+        function updateFileList() {
+            if (selectedFiles.length === 0) {
+                fileList.style.display = 'none';
+                uploadBtn.disabled = true;
+                updateStats();
+                return;
+            }
+
+            fileList.style.display = 'block';
+            uploadBtn.disabled = false;
+            
+            fileList.innerHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <div class="file-name">📄 ${file.name}</div>
+                        <div class="file-size">${formatFileSize(file.size)}</div>
+                    </div>
+                    <button class="remove-btn" onclick="removeFile(${index})">✕</button>
+                </div>
+            `).join('');
+            
+            updateStats();
+        }
+
+        // 파일 제거
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        // 로그 추가
+        function addLog(message, type = 'info') {
+            const logItem = document.createElement('div');
+            logItem.className = `status-item ${type}`;
+            logItem.innerHTML = message;
+            status.appendChild(logItem);
+            status.scrollTop = status.scrollHeight;
+            
+            if (status.children.length === 1) {
+                statusContainer.style.display = 'block';
+            }
+        }
+
+        // 모든 파일 제거
+        clearBtn.onclick = function() {
+            if (selectedFiles.length === 0) return;
+            
+            if (confirm('선택된 모든 파일을 제거하시겠습니까?')) {
+                selectedFiles = [];
+                fileInput.value = '';
+                updateFileList();
+                status.innerHTML = '';
+                statusContainer.style.display = 'none';
+                progressContainer.style.display = 'none';
+                uploadStats = { success: 0, error: 0, total: 0 };
+            }
+        };
+
+        // 파일 선택 버튼
+        selectBtn.onclick = function() {
+            if (!isUploading) fileInput.click();
+        };
+
+        // 업로드 영역 클릭
+        uploadArea.onclick = function() {
+            if (!isUploading) fileInput.click();
+        };
+
+        // 파일 선택 이벤트
+        fileInput.onchange = function(e) {
+            const files = Array.from(e.target.files);
+            if (files.length > 0) {
+                selectedFiles = selectedFiles.concat(files);
+                updateFileList();
+                addLog(`${files.length}개 파일이 선택되었습니다.`, 'info');
+            }
+        };
+
+        // 드래그 앤 드롭 이벤트들
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            if (isUploading) return;
+            
+            const dt = e.dataTransfer;
+            const files = Array.from(dt.files);
+            
+            if (files.length > 0) {
+                selectedFiles = selectedFiles.concat(files);
+                updateFileList();
+                addLog(`드래그로 ${files.length}개 파일이 추가되었습니다.`, 'info');
+            }
+        }
+
+        // 업로드 함수
+        async function uploadFiles() {
+            if (selectedFiles.length === 0) {
+                alert("업로드할 파일을 선택해주세요.");
+                return;
+            }
+
+            // 업로드 시작
+            isUploading = true;
+            uploadBtn.disabled = true;
+            selectBtn.disabled = true;
+            clearBtn.disabled = true;
+            
+            uploadBtn.innerHTML = '<span class="loading"></span>업로드 중...';
+            progressContainer.style.display = 'block';
+            
+            uploadStats = { success: 0, error: 0, total: selectedFiles.length };
+            
+            addLog(`📤 총 ${selectedFiles.length}개 파일 업로드를 시작합니다...`, 'info');
+
+            // 각 파일 업로드
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                const progress = ((i + 1) / selectedFiles.length) * 100;
+                
+                // 진행률 업데이트
+                progressBar.style.width = progress + '%';
+                uploadProgress.textContent = Math.round(progress) + '%';
+                
+                addLog(`⏳ ${file.name} 업로드 중... (${i + 1}/${selectedFiles.length})`, 'info');
+                
+                try {
+                    // 파일을 Base64로 변환
+                    const base64Data = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = e => resolve(e.target.result.split(',')[1]);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                    });
+
+                    // FormData 생성
+                    const formData = new FormData();
+                    formData.append('fileData', base64Data);
+                    formData.append('fileName', file.name);
+                    formData.append('mimeType', file.type || 'application/octet-stream');
+
+                    // 서버에 업로드
+                    const response = await fetch('https://script.google.com/macros/s/AKfycbxa9G-dRtrKgNmPy1fPj22gwYnmv5DsK-dtuEWVD89RzSMtYgDuHdTVq1ZWQS2WrFtm/exec', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        addLog(`✅ ${file.name} 업로드 완료 - <a href="${result.url}" target="_blank" style="color: #28a745; text-decoration: underline;">파일 보기</a>`, 'success');
+                        uploadStats.success++;
+                    } else {
+                        throw new Error(result.message || '알 수 없는 오류');
+                    }
+                    
+                } catch (error) {
+                    addLog(`❌ ${file.name} 업로드 실패: ${error.message}`, 'error');
+                    uploadStats.error++;
+                }
+                
+                // 서버 부하 방지를 위한 대기
+                if (i < selectedFiles.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+            }
+
+            // 업로드 완료
+            progressBar.style.width = '100%';
+            uploadProgress.textContent = '100%';
+            
+            const summaryMessage = `🎉 업로드 완료! 성공: ${uploadStats.success}개, 실패: ${uploadStats.error}개`;
+            addLog(summaryMessage, uploadStats.error === 0 ? 'success' : 'info');
+            
+            // UI 복원
+            isUploading = false;
+            uploadBtn.disabled = false;
+            selectBtn.disabled = false;
+            clearBtn.disabled = false;
+            uploadBtn.innerHTML = '🚀 업로드 시작';
+            
+            // 성공한 경우 파일 목록 초기화
+            if (uploadStats.success > 0) {
+                setTimeout(() => {
+                    if (confirm('업로드가 완료되었습니다. 파일 목록을 초기화하시겠습니까?')) {
+                        selectedFiles = [];
+                        fileInput.value = '';
+                        updateFileList();
+                    }
+                }, 2000);
+            }
+        }
+
+        // 업로드 버튼 이벤트
+        uploadBtn.onclick = uploadFiles;
+
+        // 페이지 로드 시 초기화
+        window.addEventListener('load', function() {
+            console.log('📁 디자인 파일 업로드 페이지가 로드되었습니다.');
+            updateFileList();
+            
+            // 웹앱 URL이 올바른지 확인하는 간단한 테스트
+            addLog('🔧 시스템이 준비되었습니다. 파일을 선택해주세요.', 'info');
+        });
+
+        // 브라우저 종료 시 경고 (업로드 중인 경우)
+        window.addEventListener('beforeunload', function(e) {
+            if (isUploading) {
+                e.preventDefault();
+                e.returnValue = '업로드가 진행 중입니다. 페이지를 떠나시겠습니까?';
+                return e.returnValue;
+            }
+        });
+    </script>
+</body>
+</html>
