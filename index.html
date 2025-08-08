@@ -444,7 +444,7 @@
     }
 
     /* 파일 업로드 - 현대적 스타일 */
-    .file-upload-container {
+    .upload-container {
       background: var(--gradient-card);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -452,88 +452,113 @@
       box-shadow: var(--shadow-lg);
       padding: 3rem;
       margin-bottom: 2rem;
-    }
-
-    .file-upload-area {
-      border: 3px dashed var(--border-color);
-      border-radius: var(--border-radius-lg);
-      padding: 4rem 2rem;
       text-align: center;
-      margin-bottom: 2rem;
-      cursor: pointer;
-      transition: var(--transition);
-      background: rgba(255, 255, 255, 0.5);
     }
 
-    .file-upload-area:hover {
-      border-color: var(--primary-color);
-      background: rgba(99, 102, 241, 0.05);
-      transform: translateY(-2px);
-    }
-
-    .file-upload-area.dragover {
-      border-color: var(--primary-color);
-      background: rgba(99, 102, 241, 0.1);
-      transform: scale(1.02);
-    }
-
-    .file-upload-icon {
-      font-size: 4rem;
+    .upload-icon {
+      font-size: 6rem;
       background: var(--gradient-primary);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      display: block;
     }
 
-    .file-preview {
+    .upload-info {
+      margin-bottom: 3rem;
+    }
+
+    .upload-info h2 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .upload-info p {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.7;
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .upload-features {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 3rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .file-preview-item {
-      position: relative;
-      width: 120px;
-      height: 120px;
+    .upload-feature {
+      background: rgba(255, 255, 255, 0.5);
+      padding: 2rem;
       border-radius: var(--border-radius);
-      overflow: hidden;
-      box-shadow: var(--shadow-md);
-      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
     }
 
-    .file-preview-item:hover {
-      transform: scale(1.05);
+    .upload-feature i {
+      font-size: 2.5rem;
+      color: var(--primary-color);
+      margin-bottom: 1rem;
     }
 
-    .file-preview-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .upload-feature h3 {
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
     }
 
-    .file-preview-remove {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.5rem;
-      background-color: rgba(239, 68, 68, 0.9);
-      color: white;
-      border: none;
-      border-radius: 50%;
-      width: 24px;
-      height: 24px;
-      font-size: 12px;
-      display: flex;
+    .upload-feature p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .google-form-btn {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-      transition: var(--transition-fast);
+      gap: 0.75rem;
+      padding: 1.25rem 3rem;
+      background: var(--gradient-primary);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: var(--border-radius-lg);
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
 
-    .file-preview-remove:hover {
-      background-color: var(--danger-color);
-      transform: scale(1.1);
+    .google-form-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s;
+    }
+
+    .google-form-btn:hover::before {
+      left: 100%;
+    }
+
+    .google-form-btn:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .google-form-btn i {
+      font-size: 1.3rem;
     }
 
     /* 장바구니 스타일 */
@@ -941,12 +966,13 @@
         gap: 2rem;
       }
       
-      .file-upload-container {
+      .upload-container {
         padding: 2rem;
       }
       
-      .file-upload-area {
-        padding: 3rem 1rem;
+      .upload-features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       
       .auth-form-container {
@@ -1258,230 +1284,130 @@
       return homePage;
     }
 
-    // 파일 업로드 페이지 생성
+    // 파일 업로드 페이지 생성 (구글 폼 연동)
     function createUploadPage() {
       const uploadPage = document.createElement('div');
       uploadPage.className = 'upload-page';
       
       uploadPage.innerHTML = `
-        <h1 class="section-title">디자인 파일 업로드</h1>
+        <h1 class="section-title">디자인 업로드 & 주문</h1>
         
-        <div class="file-upload-container fade-in-up">
-          <form id="upload-form">
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-tags"></i>
-                디자인 종류
-              </label>
-              <select id="design-type" class="form-control">
-                <option value="pvc">PVC 카드</option>
-                <option value="rfid">RFID 카드</option>
-                <option value="pet">PET 카드</option>
-                <option value="magnetic">마그네틱 카드</option>
-                <option value="other">기타</option>
-              </select>
+        <div class="upload-container fade-in-up">
+          <div class="upload-icon">
+            <i class="fas fa-cloud-upload-alt"></i>
+          </div>
+          
+          <div class="upload-info">
+            <h2>전문 디자이너가 직접 제작해드립니다</h2>
+            <p>
+              최고의 품질과 창의적인 디자인으로 완벽한 PVC 카드를 제작해드립니다. 
+              간단한 정보 입력만으로 전문가와 상담을 시작하실 수 있습니다.
+            </p>
+            <p style="font-weight: 600; color: var(--primary-color);">
+              ✨ 24시간 내 전문 상담 · 무료 디자인 검토 · 최고품질 보장
+            </p>
+          </div>
+          
+          <div class="upload-features">
+            <div class="upload-feature">
+              <i class="fas fa-palette"></i>
+              <h3>맞춤 디자인</h3>
+              <p>고객의 요구사항에 맞는 완전 맞춤형 디자인 제작</p>
             </div>
-            
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-cloud-upload-alt"></i>
-                디자인 파일
-              </label>
-              <div class="file-upload-area" id="file-upload-area">
-                <div class="file-upload-icon">
-                  <i class="fas fa-cloud-upload-alt"></i>
-                </div>
-                <h3>파일을 여기에 끌어다 놓거나 클릭하여 업로드하세요</h3>
-                <p class="text-muted">지원 형식: JPG, PNG, GIF, PDF, AI (최대 10MB)</p>
-                <input type="file" id="file-upload" multiple style="display: none">
+            <div class="upload-feature">
+              <i class="fas fa-shield-alt"></i>
+              <h3>품질 보장</h3>
+              <p>ISO 인증 시설에서 엄격한 품질 관리로 제작</p>
+            </div>
+            <div class="upload-feature">
+              <i class="fas fa-shipping-fast"></i>
+              <h3>빠른 배송</h3>
+              <p>주문 후 3-5일 내 전국 무료배송 (급한 경우 당일배송 가능)</p>
+            </div>
+            <div class="upload-feature">
+              <i class="fas fa-headset"></i>
+              <h3>전문 상담</h3>
+              <p>15년 경력 전문가의 1:1 맞춤 상담 서비스</p>
+            </div>
+          </div>
+          
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSdmd3xWRtB0eh7RQkhYEjsG9gOFMvP_C2JNjJMkhncD5A05Lw/viewform?usp=header" 
+             target="_blank" 
+             class="google-form-btn">
+            <i class="fas fa-edit"></i>
+            디자인 요청서 작성하기
+          </a>
+          
+          <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-radius: var(--border-radius); border-left: 4px solid var(--success-color);">
+            <h4 style="color: var(--success-color); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <i class="fas fa-info-circle"></i>
+              진행 프로세스
+            </h4>
+            <ol style="margin: 0; padding-left: 1.5rem; color: var(--text-secondary); line-height: 1.8;">
+              <li><strong>요청서 작성:</strong> 위 버튼을 클릭하여 디자인 요청서를 작성해주세요</li>
+              <li><strong>파일 업로드:</strong> 폼에서 디자인 파일을 직접 업로드하실 수 있습니다</li>
+              <li><strong>전문 상담:</strong> 24시간 내 전문 디자이너가 연락드립니다</li>
+              <li><strong>견적 확정:</strong> 맞춤 견적을 받고 주문을 확정해주세요</li>
+              <li><strong>제작 & 배송:</strong> 3-5일 내 완성품을 받아보세요!</li>
+            </ol>
+          </div>
+          
+          <div style="margin-top: 2rem; text-align: left;">
+            <h4 style="margin-bottom: 1rem; color: var(--text-primary);">
+              <i class="fas fa-file-upload"></i>
+              지원하는 파일 형식
+            </h4>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;">
+              <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center;">
+                <i class="fas fa-file-image" style="color: #ef4444; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                <div style="font-size: 0.9rem; font-weight: 600;">JPG, PNG</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">고해상도 이미지</div>
               </div>
-              <div class="file-preview" id="file-preview"></div>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-comment-alt"></i>
-                요청사항
-              </label>
-              <textarea id="design-notes" class="form-control" rows="4" placeholder="디자인에 대한 요청사항이나 특이사항을 입력해주세요. 예) 색상 조정, 사이즈 변경, 특수 효과 등"></textarea>
-            </div>
-            
-            <div class="form-group">
-              <label class="form-label">
-                <i class="fas fa-address-card"></i>
-                연락처 정보
-              </label>
-              <div class="row">
-                <div class="col">
-                  <input type="text" id="contact-name" class="form-control" placeholder="이름" value="${user ? user.name : ''}">
-                </div>
-                <div class="col">
-                  <input type="email" id="contact-email" class="form-control" placeholder="이메일" value="${user ? user.email : ''}">
-                </div>
-                <div class="col">
-                  <input type="tel" id="contact-phone" class="form-control" placeholder="전화번호" value="${user ? user.phone : ''}">
-                </div>
+              <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center;">
+                <i class="fas fa-file-pdf" style="color: #dc2626; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                <div style="font-size: 0.9rem; font-weight: 600;">PDF</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">인쇄용 파일</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center;">
+                <i class="fas fa-bezier-curve" style="color: #f59e0b; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                <div style="font-size: 0.9rem; font-weight: 600;">AI, EPS</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">벡터 파일</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.7); padding: 1rem; border-radius: var(--border-radius-sm); text-align: center;">
+                <i class="fas fa-file-alt" style="color: #6366f1; font-size: 1.5rem; margin-bottom: 0.5rem;"></i>
+                <div style="font-size: 0.9rem; font-weight: 600;">기타</div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">상담 시 문의</div>
               </div>
             </div>
-            
-            <div class="form-group">
-              <div class="form-check">
-                <input type="checkbox" id="agree-terms" class="form-check-input">
-                <label for="agree-terms" class="form-check-label">개인정보 수집 및 이용에 동의합니다.</label>
-              </div>
-            </div>
-            
-            <button type="submit" class="btn">
-              <i class="fas fa-upload"></i>
-              업로드 완료
-            </button>
-          </form>
+          </div>
+        </div>
+        
+        <div class="upload-container" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%); margin-top: 2rem;">
+          <h3 style="margin-bottom: 1.5rem; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem; justify-content: center;">
+            <i class="fas fa-phone-alt"></i>
+            급한 주문이신가요?
+          </h3>
+          <p style="margin-bottom: 2rem; font-size: 1.1rem;">
+            당일 제작이 가능한 긴급 주문은 전화로 직접 상담받으세요!
+          </p>
+          <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+            <a href="tel:02-123-4567" class="btn btn-secondary" style="font-size: 1.1rem;">
+              <i class="fas fa-phone"></i>
+              02-123-4567
+            </a>
+            <a href="mailto:info@trae.co.kr" class="btn btn-outline" style="font-size: 1.1rem;">
+              <i class="fas fa-envelope"></i>
+              info@trae.co.kr
+            </a>
+          </div>
+          <p style="margin-top: 1.5rem; font-size: 0.9rem; color: var(--text-muted);">
+            <i class="fas fa-clock"></i>
+            평일 09:00 - 18:00 | 토요일 09:00 - 15:00
+          </p>
         </div>
       `;
       
-      // 페이지가 DOM에 추가된 후 이벤트 리스너 설정
-      setTimeout(() => {
-        const fileUploadArea = document.getElementById('file-upload-area');
-        const fileUploadInput = document.getElementById('file-upload');
-        const filePreview = document.getElementById('file-preview');
-        const uploadForm = document.getElementById('upload-form');
-        
-        // 파일 업로드 영역 클릭 시 파일 선택 다이얼로그 열기
-        fileUploadArea.addEventListener('click', () => {
-          fileUploadInput.click();
-        });
-        
-        // 파일 선택 시 미리보기 생성
-        fileUploadInput.addEventListener('change', handleFileSelect);
-        
-        // 드래그 앤 드롭 이벤트
-        fileUploadArea.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          fileUploadArea.classList.add('dragover');
-        });
-        
-        fileUploadArea.addEventListener('dragleave', () => {
-          fileUploadArea.classList.remove('dragover');
-        });
-        
-        fileUploadArea.addEventListener('drop', (e) => {
-          e.preventDefault();
-          fileUploadArea.classList.remove('dragover');
-          const files = e.dataTransfer.files;
-          handleFiles(files);
-        });
-        
-        // 폼 제출 이벤트
-        uploadForm.addEventListener('submit', handleUploadSubmit);
-      }, 0);
-      
       return uploadPage;
-    }
-
-    // 파일 선택 처리
-    function handleFileSelect(e) {
-      const files = e.target.files;
-      handleFiles(files);
-    }
-
-    // 파일 처리
-    function handleFiles(files) {
-      const filePreview = document.getElementById('file-preview');
-      const validFileTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
-      const maxSize = 10 * 1024 * 1024; // 10MB
-      
-      Array.from(files).forEach(file => {
-        // 파일 유효성 검사
-        if (!validFileTypes.includes(file.type)) {
-          alert('지원하지 않는 파일 형식입니다. (JPG, PNG, GIF, PDF 파일만 업로드 가능)');
-          return;
-        }
-        
-        if (file.size > maxSize) {
-          alert('파일 크기가 너무 큽니다. 파일당 최대 10MB까지 업로드 가능합니다.');
-          return;
-        }
-        
-        // 미리보기 생성
-        const previewItem = document.createElement('div');
-        previewItem.className = 'file-preview-item';
-        
-        if (file.type.startsWith('image/')) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            previewItem.innerHTML = `
-              <img src="${e.target.result}" alt="${file.name}">
-              <button class="file-preview-remove" onclick="this.parentNode.remove()"><i class="fas fa-times"></i></button>
-            `;
-          };
-          reader.readAsDataURL(file);
-        } else {
-          // PDF 파일 등 이미지가 아닌 경우 아이콘 표시
-          const iconClass = file.type.includes('pdf') ? 'fas fa-file-pdf' : 'fas fa-file-alt';
-          previewItem.innerHTML = `
-            <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(135deg, #6366f1 0%, #06b6d4 100%);">
-              <i class="${iconClass}" style="font-size: 2.5rem; color: white;"></i>
-            </div>
-            <button class="file-preview-remove" onclick="this.parentNode.remove()"><i class="fas fa-times"></i></button>
-            <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.8); color: white; font-size: 10px; padding: 4px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${file.name}</div>
-          `;
-        }
-        
-        filePreview.appendChild(previewItem);
-      });
-    }
-
-    // 업로드 폼 제출 처리
-    function handleUploadSubmit(e) {
-      e.preventDefault();
-      
-      const designType = document.getElementById('design-type').value;
-      const designNotes = document.getElementById('design-notes').value;
-      const contactName = document.getElementById('contact-name').value;
-      const contactEmail = document.getElementById('contact-email').value;
-      const contactPhone = document.getElementById('contact-phone').value;
-      const agreeTerms = document.getElementById('agree-terms').checked;
-      const filePreview = document.getElementById('file-preview');
-      
-      // 유효성 검사
-      if (filePreview.children.length === 0) {
-        alert('디자인 파일을 업로드해주세요.');
-        return;
-      }
-      
-      if (!contactName || !contactEmail || !contactPhone) {
-        alert('연락처 정보를 모두 입력해주세요.');
-        return;
-      }
-      
-      if (!agreeTerms) {
-        alert('개인정보 수집 및 이용에 동의해주세요.');
-        return;
-      }
-      
-      // 폼 데이터 생성 (실제로는 서버에 전송)
-      const formData = {
-        designType,
-        designNotes,
-        contactInfo: {
-          name: contactName,
-          email: contactEmail,
-          phone: contactPhone
-        },
-        agreeTerms
-      };
-      
-      console.log('업로드 요청 데이터:', formData);
-      
-      // 성공 메시지 표시
-      alert('🎉 디자인 파일이 성공적으로 업로드되었습니다!\n전문 디자이너가 검토 후 24시간 내에 연락드리겠습니다.');
-      
-      // 폼 초기화
-      document.getElementById('upload-form').reset();
-      filePreview.innerHTML = '';
-      
-      // 홈페이지로 이동
-      window.location.hash = '#/';
     }
 
     // 장바구니 페이지 생성
